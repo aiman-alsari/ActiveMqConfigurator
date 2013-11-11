@@ -11,4 +11,11 @@ Each DataCentre can have multiple JMS queues. This is referred to as a cluster o
 
 The network of brokers in a primary datacentre are configured to pass data around the datacentre until they are ready to be consumed. To avoid data loss these should have storage configured as RAID or SAN storage. If any queue gets knocked out of action, the others will continue to operate. Secondary (or higher) DataCentres are considered backups, and are assumed to not have any consumers by default. They store and forward anything they receive back to the primary DataCentre once it is ready to handle them again.
 
-Each Node can also re-use another datacentre as its backup. Email aiman.alsari at gmail for more information.
+Defining multiple nodes can also allow you to re-use another foreign node's datacentre as its backup. Email aiman.alsari at gmail for more information, as this is not a common use-case.
+
+
+INSTALLATION INSTRUCTIONS
+
+To run this, firstly take a look at example.json and use that to create your datacentre layout.
+Run ant with no options, this will create an executable jar Amqcfg.jar in the dist/ directory.
+Run the jar file and pass the JSON file as an argument. Follow the on-screen instructions. The visualisation can be viewed using dot and a pdf viewer.
