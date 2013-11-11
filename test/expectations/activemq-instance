@@ -1,0 +1,8 @@
+#!/bin/sh
+# Usage: activemq-instance instance_name start 8100
+# Where instance_name is the instance you wish to start, and 8100 is the port number you want the jetty diagnostics server to run on.
+INSTANCE_NAME=$1
+echo "Invoking $2 on ${INSTANCE_NAME}"
+export ACTIVEMQ_DATA_DIR=/opt/amq/data/${INSTANCE_NAME}/
+export ACTIVEMQ_OPTS="-Djetty.port=$3 -Dinstance.name=${INSTANCE_NAME}"
+bin/activemq $2 xbean:conf/activemq-${INSTANCE_NAME}.xml

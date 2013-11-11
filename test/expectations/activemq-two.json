@@ -1,0 +1,61 @@
+[ {
+  "name" : "node1",
+  "dataCentres" : [ {
+    "name" : "dc1",
+    "jmsServers" : [ {
+      "name" : "jms1",
+      "public" : true,
+      "ipAddress" : "127.0.0.1:60601",
+      "forwardTo" : ""
+    }, {
+      "name" : "jms2",
+      "public" : true,
+      "ipAddress" : "127.0.0.1:60602",
+      "forwardTo" : ""
+    } ]
+  }, {
+    "name" : "backup",
+    "jmsServers" : [ {
+      "name" : "jms3",
+      "public" : false,
+      "ipAddress" : "127.0.0.1:60603",
+      "forwardTo" : ""
+    }, {
+      "name" : "jms4",
+      "public" : false,
+      "ipAddress" : "127.0.0.1:60604",
+      "forwardTo" : ""
+    } ]
+  } ],
+  "nodesToBackup" : [ "node2" ]
+}, {
+  "name" : "node2",
+  "dataCentres" : [ {
+    "name" : "dc1",
+    "jmsServers" : [ {
+      "name" : "jms1",
+      "public" : true,
+      "ipAddress" : "127.0.0.1:60605",
+      "forwardTo" : ""
+    }, {
+      "name" : "jms2",
+      "public" : false,
+      "ipAddress" : "127.0.0.1:60606",
+      "forwardTo" : ""
+    } ]
+  }, {
+    "name" : "dc2",
+    "jmsServers" : [ {
+      "name" : "jms3",
+      "public" : false,
+      "ipAddress" : "127.0.0.1:60607",
+      "forwardTo" : ""
+    }, {
+      "name" : "jms4",
+      "public" : false,
+      "ipAddress" : "127.0.0.1:60608",
+      "forwardTo" : ""
+    } ]
+  } ],
+  "nodesToBackup" : [ ]
+} ]

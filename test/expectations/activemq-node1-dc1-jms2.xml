@@ -1,0 +1,127 @@
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:amq="http://activemq.apache.org/schema/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+  http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<value>file:${activemq.base}/conf/credentials.properties</value>
+		</property>
+	</bean>
+
+	<broker xmlns="http://activemq.apache.org/schema/core" brokerName="node1-dc1-jms2" dataDirectory="${activemq.base}/data/node1-dc1-jms2" destroyApplicationContextOnStop="true">
+
+		<destinationPolicy>
+			<policyMap>
+				<policyEntries>
+					<policyEntry topic=">" producerFlowControl="true" memoryLimit="1mb">
+						<pendingSubscriberPolicy>
+							<vmCursor />
+						</pendingSubscriberPolicy>
+					</policyEntry>
+
+					<!-- 
+						All backend queues should continue writing to disk when running out of memory. 
+						They should not block producers. This allows the backend or DB to be down 
+						for days on end without loosing any data. 
+					-->
+					<policyEntry queue="backend.>" producerFlowControl="false" memoryLimit="128mb">
+					</policyEntry>
+
+				</policyEntries>
+			</policyMap>
+		</destinationPolicy>
+
+		<destinations>
+			<!-- 
+				While it is possible to allow ActiveMQ to create queues on-demand, 
+				for security purposes we've locked it down so queues must be 
+				explicitly named. 
+			-->
+			<queue physicalName="backend.node2" />
+			<queue physicalName="backend.node1" />
+		</destinations>
+
+		<jmsBridgeConnectors>
+			<!-- Defines JMS to JMS Bridges, which store-and-forward any data destined for other backends -->
+			<jmsQueueConnector localQueueConnectionFactory="#localFactory" outboundQueueConnectionFactory="#node2Factory" localUsername="system"
+				localPassword="${system.password}" outboundUsername="system" outboundPassword="${system.password}">
+				<outboundQueueBridges>
+					<outboundQueueBridge outboundQueueName="backend.node2" localQueueName="backend.node2" />
+				</outboundQueueBridges>
+			</jmsQueueConnector>
+		</jmsBridgeConnectors>
+
+		<managementContext>
+			<managementContext createConnector="false" />
+		</managementContext>
+
+		<networkConnectors>
+			<!-- This section establishes a network of brokers Add connections to all other JMS servers within the same datacentre for high availability -->
+			<networkConnector userName="system" password="${system.password}" dynamicOnly="true" prefetchSize="1" networkTTL="5"
+				uri="static:(ssl://127.0.0.1:60601)" duplex="false" />
+		</networkConnectors>
+
+		<persistenceAdapter>
+			<!-- Defines where persistent data is stored locally -->
+			<kahaDB directory="${activemq.base}/data/node1-dc1-jms2/db" />
+		</persistenceAdapter>
+
+		<plugins>
+			<simpleAuthenticationPlugin>
+				<users>
+					<authenticationUser username="system" password="${system.password}" groups="producers,consumers,admins" />
+					<authenticationUser username="producer" password="${producer.password}" groups="producers" />
+					<authenticationUser username="consumer" password="${consumer.password}" groups="consumers" />
+				</users>
+			</simpleAuthenticationPlugin>
+
+			<authorizationPlugin>
+				<map>
+					<authorizationMap>
+						<authorizationEntries>
+							<authorizationEntry topic=">" read="admins" write="admins" admin="admins" />
+							<authorizationEntry queue=">" read="admins" write="admins" admin="admins" />
+							<authorizationEntry queue="backend.>" read="consumers" write="producers" admin="admins" />
+							<authorizationEntry topic="ActiveMQ.Advisory.>" read="producers,consumers" write="producers,consumers" admin="producers,consumers" />
+						</authorizationEntries>
+					</authorizationMap>
+				</map>
+			</authorizationPlugin>
+		</plugins>
+
+		<systemUsage>
+			<systemUsage>
+				<memoryUsage>
+					<memoryUsage limit="512 mb" />
+				</memoryUsage>
+				<storeUsage>
+					<storeUsage limit="50 gb" />
+				</storeUsage>
+				<tempUsage>
+					<tempUsage limit="5 gb" />
+				</tempUsage>
+			</systemUsage>
+		</systemUsage>
+
+		<transportConnectors>
+			<!-- Defines what ports this JMS server operates on -->
+			<transportConnector name="ssl" uri="ssl://127.0.0.1:60602?transport.enabledCipherSuites=TLS_RSA_WITH_AES_256_CBC_SHA" />
+		</transportConnectors>
+
+	</broker>
+
+	<bean id="node2Factory" class="org.apache.activemq.ActiveMQConnectionFactory">
+		<property name="brokerURL" value="failover:(ssl://127.0.0.1:60605)" />
+		<property name="userName" value="system" />
+		<property name="password" value="${system.password}" />
+	</bean>
+
+	<bean id="localFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+		<property name="brokerURL" value="vm://localhost:61616?create=false&amp;waitForStart=10000" />
+		<property name="userName" value="system" />
+		<property name="password" value="${system.password}" />
+	</bean>
+
+	<!-- Remove below if you don't want to run the web console -->
+	<import resource="jetty.xml" />
+</beans>

@@ -1,0 +1,13 @@
+[ {
+  "name" : "node1",
+  "dataCentres" : [ {
+    "name" : "dc1",
+    "jmsServers" : [ {
+      "name" : "jms1",
+      "public" : true,
+      "ipAddress" : "127.0.0.1:60601",
+      "forwardTo" : ""
+    } ]
+  } ],
+  "nodesToBackup" : [ ]
+} ]

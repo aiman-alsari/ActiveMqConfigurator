@@ -1,0 +1,50 @@
+[ {
+	name : "node1",
+	nodesToBackup : [ "node2", "node3", "node4" ],
+	dataCentres : [ 
+      {
+		name : "dc1",
+		jmsServers : [ 
+             { name : "jms1", public : true, ipAddress : "202.123.123.123:60601" },
+             { name : "jms2", public : false, ipAddress : "202.123.123.123:60602" },
+             { name : "jms3", public : false, ipAddress : "202.123.123.126:60603" }
+        ]
+	  },
+	  {
+			name : "backup",
+			jmsServers : [ 
+	             { name : "jms4", public : false, ipAddress : "207.0.0.1:60601", forwardTo: "node1.dc1" }
+	        ]
+	  }
+	]
+},
+{
+	name : "node3",
+	dataCentres : [ {
+		name : "dc1",
+		jmsServers : [ 
+             { name : "jms1", public : true, ipAddress : "145.0.0.1:60601" },
+             { name : "jms2", ipAddress : "145.0.0.2:60601" }
+        ]
+	} ]
+},
+{
+	name : "node2",
+	dataCentres : [ {
+		name : "dc1",
+		jmsServers : [ 
+             { name : "jms1", public : true, ipAddress : "165.0.0.1:60601" },
+             { name : "jms2", ipAddress : "165.0.0.2:60601" }
+        ]
+	} ]
+},
+{
+	name : "node4",
+	dataCentres : [ {
+		name : "dc1",
+		jmsServers : [ 
+             { name : "jms1", public : true, ipAddress : "65.0.0.1:60601" },
+             { name : "jms2", ipAddress : "65.0.0.2:60601" }
+        ]
+	} ]
+}]

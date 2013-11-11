@@ -1,0 +1,25 @@
+digraph callgraph {
+	concentrate=true;
+	nodesep=1.0; 
+	splines=true; 
+	ranksep="1.5 equally";
+	node [fontname="verdana"];
+	fontname="Verdana";
+
+	subgraph cluster_node1 {
+		label="node1";
+		subgraph cluster_node1_dc1 {
+			label="dc1";
+			node [label="jms1" ] node1_dc1_jms1;
+			node [label="jms2" ] node1_dc1_jms2;
+
+            { rank = same; node1_dc1_jms1; node1_dc1_jms2; }
+
+		}
+	}
+
+	//node1 Internal Edges
+	node1_dc1_jms1->node1_dc1_jms2;
+	node1_dc1_jms2->node1_dc1_jms1;
+
+}

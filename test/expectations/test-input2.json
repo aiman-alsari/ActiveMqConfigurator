@@ -1,0 +1,9 @@
+[ {
+	"name" : "node1",
+	"dataCentres" : [ {
+		"name" : "dc1",
+		"jmsServers" : [ 
+             { "name" : "jms1", "ipAddress" : "127.0.0.1:60601" }
+        ]
+	} ]
+} ]

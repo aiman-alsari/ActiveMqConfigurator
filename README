@@ -1,0 +1,14 @@
+This tool is used to help automate the configuration of distributed ActiveMQ queues that are used for data gathering + processing operations into intra-datacentre and inter-datacentre redundant servers.
+A JSON data model is required to be set up that defines the names, IPs and server locations. The tool is then run on this JSON data object and a graphviz visualisation is produced at the end to help visualise the connections.
+
+The terms:
+
+A Node is a representation of a set of data. Each Node has it's own data and it does not share this data with other Nodes. Thus, a Node is a form of data segregation. In practice, most architectures will not have a concept of multiple 'Nodes' and this can be ignored.
+
+A Node is made up of a collection of DataCentres. Each DataCentre represents a physical data centre. In practice there will be a primary data centre and a backup data centre stored on a different physical premise in case of a Fire or other natural disaster. This is a form of Inter-DataCentre redundancy.
+
+Each DataCentre can have multiple JMS queues. This is referred to as a cluster or a network of brokers. They are a form of Intra-DataCentre redundancy.
+
+The network of brokers in a primary datacentre are configured to pass data around the datacentre until they are ready to be consumed. To avoid data loss these should have storage configured as RAID or SAN storage. If any queue gets knocked out of action, the others will continue to operate. Secondary (or higher) DataCentres are considered backups, and are assumed to not have any consumers by default. They store and forward anything they receive back to the primary DataCentre once it is ready to handle them again.
+
+Each Node can also re-use another datacentre as its backup. Email aiman.alsari at gmail for more information.

@@ -1,0 +1,19 @@
+[ {
+	name : "node1",
+	dataCentres : [ 
+      {
+		name : "dc1",
+		jmsServers : [ 
+             { name : "jms1", public : true, ipAddress : "202.123.123.123:60601" },
+             { name : "jms2", public : false, ipAddress : "202.123.123.123:60602" },
+             { name : "jms3", public : false, ipAddress : "202.123.123.126:60603" }
+        ]
+	  },
+	  {
+			name : "backup",
+			jmsServers : [ 
+	             { name : "jms4", public : false, ipAddress : "207.0.0.1:60601", forwardTo: "node1.dc1" }
+	        ]
+	  }
+	]
+} ]

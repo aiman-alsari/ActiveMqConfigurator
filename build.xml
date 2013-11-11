@@ -1,0 +1,46 @@
+<project name="active_mq_configurator" default="jar-standalone">
+
+	<property name="dir.src" value="src" />
+	<property name="dir.build" value="build" />
+	<property name="dir.dist" value="dist" />
+
+	<path id="classpath.compile">
+		<fileset dir="lib/" includes="*.jar" />
+	</path>
+
+	<target name="prepare">
+		<mkdir dir="${dir.dist}" />
+		<mkdir dir="${dir.build}" />
+	</target>
+
+	<target name="clean">
+		<delete dir="${dir.build}" />
+		<delete dir="${dir.dist}" />
+	</target>
+
+	<target name="build" depends="prepare">
+		<javac fork="true" srcdir="${dir.src}" destdir="${dir.build}" debug="on" deprecation="off" classpathref="classpath.compile" />
+	</target>
+
+	<target name="jar" depends="build">
+		<jar destfile="${dir.dist}/Amqcfg.jar">
+			<fileset dir="${dir.build}" />
+			<manifest>
+				<attribute name="Main-Class" value="Amqcfg" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="jar-standalone" depends="build">
+		<jar destfile="${dir.dist}/Amqcfg.jar">
+			<fileset dir="${dir.build}" />
+			<zipfileset includes="**/*.class" src="lib/guava-r09.jar" />
+			<zipfileset includes="**/*.class" src="lib/jackson-core-asl-1.8.5.jar" />
+			<zipfileset includes="**/*.class" src="lib/jackson-mapper-asl-1.8.5.jar" />
+			<manifest>
+				<attribute name="Main-Class" value="nz.co.ahc.activemqCfg.Amqcfg" />
+			</manifest>
+		</jar>
+	</target>
+
+</project>
